@@ -11,7 +11,6 @@ export function getSingerList(){
         pagesize:100,
         pagenum:1,
         g_tk:1927396954,
-        jsonpCallback:'GetSingerListCallback',
         loginUin:0,
         hostUin:0,
         format:'jsonp',
