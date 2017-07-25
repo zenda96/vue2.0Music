@@ -26,7 +26,7 @@
                         <span class="time time-l">{{format(currentTime)}}</span>
                         <div class="progress-bar-wrapper">
                         </div>
-                        <span class="time time-r">{{format(currentTime.duration)}}</span>
+                        <span class="time time-r">{{format(currentSong.duration)}}</span>
                     </div>
                     <div class="operators">
                         <div class="icon i-left">
