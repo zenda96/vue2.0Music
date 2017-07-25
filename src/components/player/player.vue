@@ -1,70 +1,185 @@
 <template>
     <div class="player" v-show="playlist.length>0">
-        <div class="normal-player" v-show="fullScreen">
-            <div class="background">
-                <img width="100%" height="100%">
-            </div>
-            <div class="top">
-                <div class="back">
-                    <i class="icon-back"></i>
+        <transition name="normal">
+            <div class="normal-player" v-show="fullScreen">
+                <div class="background">
+                    <img width="100%" height="100%" :src="currentSong.image">
                 </div>
-                <h1 class="title"></h1>
-                <h2 class="subtitle"></h2>
-            </div>
-            <div class="middle">
-                <div class="middle-l">
-                    <div class="cd-wrapper">
-                        <div class="cd">
-                            <img  class="image">
+                <div class="top">
+                    <div class="back" @click="back">
+                        <i class="icon-back"></i>
+                    </div>
+                    <h1 class="title" v-html="currentSong.name"></h1>
+                    <h2 class="subtitle" v-html="currentSong.singer"></h2>
+                </div>
+                <div class="middle">
+                    <div class="middle-l">
+                        <div class="cd-wrapper">
+                            <div class="cd" :class="cdCls">
+                                <img :src="currentSong.image" class="image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom">
+                    <div class="progress-wrapper">
+                        <span class="time time-l">{{format(currentTime)}}</span>
+                        <div class="progress-bar-wrapper">
+                        </div>
+                        <span class="time time-r">{{format(currentTime.duration)}}</span>
+                    </div>
+                    <div class="operators">
+                        <div class="icon i-left">
+                            <i class="icon-sequence"></i>
+                        </div>
+                        <div class="icon i-left" :class="disableCls">
+                            <i class="icon-prev" @click="prev"></i>
+                        </div>
+                        <div class="icon i-center" :class="disableCls">
+                            <i :class="playIcon" @click="togglePlaying"></i>
+                        </div>
+                        <div class="icon i-right" :class="disableCls">
+                            <i class="icon-next" @click="next"></i>
+                        </div>
+                        <div class="icon i-right">
+                            <i class="icon-not-favorite"></i>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="bottom">
-                <div class="operators">
-                    <div class="icon i-left">
-                        <i class="icon-sequence"></i>
-                    </div>
-                    <div class="icon i-left">
-                        <i class="icon-prev"></i>
-                    </div>
-                    <div class="icon i-center">
-                        <i class="icon-play"></i>
-                    </div>
-                    <div class="icon i-right">
-                        <i class="icon-next"></i>
-                    </div>
-                    <div class="icon i-right">
-                        <i class="icon-not-favorite"></i>
-                    </div>
+        </transition>
+         <transition name="mini">
+            <div class="mini-player" v-show="!fullScreen" @click="open">
+                <div class="icon">
+                    <img width="40" height="40" :src="currentSong.image" :class="cdCls">
+                </div>
+                <div class="text">
+                    <h2 class="name" v-html="currentSong.name"> </h2>
+                    <p class="desc" v-html="currentSong.singer"></p>
+                </div>
+                <div class="control">
+                    <i :class="miniIcon" @click.stop="togglePlaying"></i>
+                </div>
+                <div class="control">
+                    <div class="icon-playlist"></div>
                 </div>
             </div>
-        </div>
-        <div class="mini-player" v-show="!fullScreen">
-            <div class="icon">
-                <img width="" height="">
-            </div>
-            <div class="text">
-                <h2 class="name"> </h2>
-                <p class="desc"></p>
-            </div>
-            <div class="control"></div>
-            <div class="control">
-                <div class="icon-playlist"></div>
-            </div>
-        </div>
+        </transition>
+        <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="updateTime"></audio>
     </div>
 </template>
 <script>
-    import {mapGetters} from 'vuex'
+    import {mapGetters,mapMutations} from 'vuex'
+
 
     export default{
+        data(){
+            return {
+                songReady:false,
+                currentTime:0
+            }
+        },
         computed:{
             ...mapGetters([
                 'fullScreen',
-                'playlist'
-            ])
-        }
+                'playlist',
+                'currentSong',
+                'playing',
+                'currentIndex'
+            ]),
+            playIcon(){
+                return this.playing?'icon-pause':'icon-play'
+            },
+            miniIcon(){
+                return this.playing?'icon-pause-mini':'icon-play-mini'
+            },
+            cdCls(){
+                return this.playing ? 'play':'play pause'
+            },
+            disableCls(){
+                return this.songReady ? '':'disable'
+            }
+        },
+        methods:{
+            back(){
+                this.setFullScreen(false)
+            },
+            open(){
+                this.setFullScreen(true)
+            },
+            ...mapMutations({
+                setFullScreen:'SET_FULL_SCREEN',
+                setPlayingState:'SET_PLAYING_STATE',
+                setCurrentIndex:'SET_CURRENT_INDEX'
+            }),
+            togglePlaying(){
+                this.setPlayingState(!this.playing)
+            },
+            next(){
+                if(!this.songReady){
+                    return
+                }
+                let index = this.currentIndex + 1
+                if (index === this.playlist.length){
+                    index = 0
+                }
+                this.setCurrentIndex(index)
+                if(!this.playing){
+                    this.togglePlaying()
+                }
+                this.songReady = false
+            },
+            prev(){
+                if(!this.songReady){
+                    return
+                }
+                let index = this.currentIndex - 1
+                if (index === -1){
+                    index = this.playlist.length - 1
+                }
+                this.setCurrentIndex(index)
+                if(!this.playing){
+                    this.togglePlaying()
+                }
+                this.songReady = false
+            },
+            ready(){
+                this.songReady = true
+            },
+            error(){
+                this.songReady = true
+            },
+            updateTime(e){
+                this.currentTime = e.target.currentTime
+            },
+            format(interval){
+                interval = interval | 0 
+                const minute = this._pad(interval / 60 | 0)
+                const second = this._pad(interval % 60)
+                return `${minute}:${second}`
+            },
+            _pad(num,n=2){
+                let len = num.toString().length
+                while(len<n){
+                    num = '0' + num
+                    len++
+                }
+                return num
+            }
+        },
+        watch:{
+            currentSong(){
+                this.$nextTick(()=>{
+                    this.$refs.audio.play()
+                })
+            },
+            playing(newPlaying){
+                const audio = this.$refs.audio
+                this.$nextTick(()=>{
+                    newPlaying ? audio.play():audio.pause() 
+                })
+            }
+        },
     }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
