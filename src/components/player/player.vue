@@ -25,6 +25,7 @@
                     <div class="progress-wrapper">
                         <span class="time time-l">{{format(currentTime)}}</span>
                         <div class="progress-bar-wrapper">
+                            <progress-bar :percent="percent"></progress-bar>
                         </div>
                         <span class="time time-r">{{format(currentSong.duration)}}</span>
                     </div>
@@ -70,7 +71,7 @@
 </template>
 <script>
     import {mapGetters,mapMutations} from 'vuex'
-
+    import ProgressBar from 'base/progress-bar/progress-bar'
 
     export default{
         data(){
@@ -98,6 +99,9 @@
             },
             disableCls(){
                 return this.songReady ? '':'disable'
+            },
+            percent(){
+                return this.currentTime / this.currentSong.duration
             }
         },
         methods:{
@@ -180,6 +184,9 @@
                 })
             }
         },
+        components:{
+            ProgressBar,            
+        }
     }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
@@ -323,9 +330,9 @@
                     .time
                         color: $color-text
                         font-size: $font-size-small
-                        flex: 0 0 30px
+                        flex: 0 0 40px
                         line-height: 30px
-                        width: 30px
+                        width: 40px
                         &.time-l
                             text-align: left
                         &.time-r
