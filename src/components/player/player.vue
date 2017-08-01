@@ -63,7 +63,7 @@
                         <i :class="miniIcon" @click.stop="togglePlaying" class="icon-mini"></i>
                     </progress-circle>                    
                 </div>
-                <div class="control" @click="showPlaylist">
+                <div class="control" @click.stop="showPlaylist">
                     <div class="icon-playlist"></div>
                 </div>
             </div>
@@ -223,6 +223,9 @@
         },
         watch:{
             currentSong(newSong,oldSong){
+                if(!newSong.id){
+                    return
+                }
                 if(newSong.id === oldSong.id){
                     return
                 }
