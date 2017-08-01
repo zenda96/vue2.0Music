@@ -63,11 +63,12 @@
                         <i :class="miniIcon" @click.stop="togglePlaying" class="icon-mini"></i>
                     </progress-circle>                    
                 </div>
-                <div class="control">
+                <div class="control" @click="showPlaylist">
                     <div class="icon-playlist"></div>
                 </div>
             </div>
         </transition>
+        <playlist ref="playlist"></playlist>
         <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
     </div>
 </template>
@@ -77,6 +78,7 @@
     import ProgressCircle from 'base/progress-circle/progress-circle'
     import {playMode} from 'common/js/config'
     import {shuffle} from 'common/js/util'
+    import Playlist from 'components/playlist/playlist'
 
     export default{
         data(){
@@ -207,6 +209,9 @@
                     this.next()
                 }
             },
+            showPlaylist(){
+                this.$refs.playlist.show()
+            },
             _pad(num,n=2){
                 let len = num.toString().length
                 while(len<n){
@@ -235,7 +240,8 @@
         },
         components:{
             ProgressBar,
-            ProgressCircle,            
+            ProgressCircle,        
+            Playlist    
         }
     }
 </script>
