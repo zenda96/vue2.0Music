@@ -6,7 +6,7 @@
                     <h1 class="title">
                         <i class="icon"></i>
                         <span class="text"></span>
-                        <span class="clear"><i class="icon-clear"></i></span>
+                        <span class="clear" @click="showConfirm"><i class="icon-clear"></i></span>
                     </h1>
                 </div>
                 <scroll class="list-content" :data="sequenceList" ref="listContent">
@@ -33,12 +33,14 @@
                     <span>关闭</span>
                 </div>
             </div>
+            <confirm ref="confirm" text="是否清空播放列表" confirmBtnText="清空" @confirm="confirmClear"></confirm>
         </div>
     </transition>
 </template>
 <script>
 import {mapGetters,mapMutations,mapActions} from 'vuex'
 import Scroll from 'base/scroll/scroll'
+import Confirm from 'base/confirm/confirm'
 import {playMode} from 'common/js/config'
 
 export default{
@@ -101,16 +103,25 @@ export default{
                 this.hide()
             }
         },
+        showConfirm(){
+            this.$refs.confirm.show()
+        },
+        confirmClear(){
+            this.deleteSongList()
+            this.hide()
+        },
         ...mapMutations({
             setCurrentIndex:'SET_CURRENT_INDEX',
             setPlayingState:'SET_PLAYING_STATE'
         }),
         ...mapActions([
-            'deleteSong'
+            'deleteSong',
+            'deleteSongList'
         ])
     },
     components:{
         Scroll,
+        Confirm
     }
 }
 </script>

@@ -74,9 +74,9 @@ export default{
             transform:translate(-50%,-50%)
             z-index:9999
             .confirm-content
-            width:270px
-            border-radius:13px
-            background:$color-highlight-background
+                width:270px
+                border-radius:13px
+                background:$color-highlight-background
             .text
                 padding:19px 15px
                 line-height:22px
