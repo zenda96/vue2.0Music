@@ -16,7 +16,7 @@
 import {search} from 'api/search'
 import {ERR_OK} from 'api/config'
 import {filterSinger} from 'common/js/song'
-cosnt TYPE_SINGER = 'singer'
+const TYPE_SINGER = 'singer'
 
 export default{
     data(){
@@ -43,19 +43,19 @@ export default{
     methods:{
         searh(){
             search(this.query,this.page,this.showSinger).then((res)=>{
-                if(res.code====ERR_OK){
+                if(res.code===ERR_OK){
                     this.result = this._genResult(res.data)
                 }
             })
         },
         getIconclass(item){
             if(item.type === TYPE_SINGER){
-                return 'icon-music'
+                return 'icon-mine'
             }else{
                 return 'icon-music'
             }
         },
-        getDisplayName(){
+        getDisplayName(item){
             if(item.type === TYPE_SINGER){
                 return item.singername
             }else{

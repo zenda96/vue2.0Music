@@ -17,8 +17,8 @@
                 </div>
             </div>
         </div>
-        <div class="search-suggest" v-show="query">
-            <suggest :query="query"></suggest>
+        <div class="search-suggest">
+            <suggest :query="query" v-show="query"></suggest>
         </div>
     </div>
 </template>
