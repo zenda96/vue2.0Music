@@ -9,3 +9,26 @@ export function getHotKey(){
     })
     return jsonp(url,data,options)
 }
+
+
+export function search(query,page,zhida){
+    const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+    const data = Object.assign({},commonParams,{
+        w:query,
+        zhidaqu:1,
+        catZhida: zhida? 1:0,
+        t:0,
+        flag:1,
+        ie:'utf-8',
+        sem:1,
+        aggr:0,
+        remoteplace:'txt.mqq.all',
+        perpage:20,
+        n:20,
+        p:page,
+        platform:'h5',
+        uid:0,
+        needNewCode:1,
+    })
+    return jsonp(url,data,options)
+}
