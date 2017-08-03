@@ -1,7 +1,7 @@
 <template>
-    <div class="suggest">
+    <scroll class="suggest" :data="result">
         <ul class="suggest-list">
-            <li class="suggest-item" v-for="item in result">
+            <li class="suggest-item" v-for="item in result" @click="selectItem(item)">
                 <div class="icon">
                     <i :class="getIconclass(item)"></i>
                 </div>
@@ -10,12 +10,15 @@
                 </div>
             </li>
         </ul>
-    </div>
+    </scroll>
 </template>
 <script>
 import {search} from 'api/search'
 import {ERR_OK} from 'api/config'
 import {filterSinger} from 'common/js/song'
+import Scroll from 'base/scroll/scroll'
+import Singer from 'common/js/singer'
+import {mapMutations} from 'vuex'
 const TYPE_SINGER = 'singer'
 
 export default{
@@ -62,6 +65,23 @@ export default{
                 return `${item.songname} - ${filterSinger(item.singer)}`
             }
         },
+        selectItem(item){
+            console.log(item)
+            if(item.type===TYPE_SINGER){
+                const singer = new Singer({
+                    id:item.singerid,
+                    name:item.singername,
+                    mid:item.singermid
+                })
+                this.$router.push({
+                    path:`/search/${singer.id}`
+                })
+                this.setSinger(singer)
+            }
+        },
+        ...mapMutations({
+            setSinger:'SET_SINGER'
+        }),
         _genResult(data){
             let ret =[]
             if(data.zhida && data.zhida.singerid){
@@ -73,6 +93,9 @@ export default{
             return ret
         }
     },
+    components:{
+        Scroll
+    }
 }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">

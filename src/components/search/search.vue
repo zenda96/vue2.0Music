@@ -20,6 +20,7 @@
         <div class="search-suggest">
             <suggest :query="query" v-show="query"></suggest>
         </div>
+        <router-view></router-view>
     </div>
 </template>
 <script>
